@@ -1,0 +1,2 @@
+# PoissonBinomialDistributionCalculator
+A probability calculator
