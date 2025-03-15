@@ -1,88 +1,76 @@
 #include <iostream>
+#include <optional>
+#include <string_view>
 #include <vector>
-#include <sstream>
 
 #include "PoissonBinomialDistribution.hpp"
 
+#include "Lud-utils/lud_parser.hpp"
+#define LUD_CL_IMPLEMENTATION
+#include "Lud-utils/lud_cl.hpp"
 
-bool isInt(const std::string& str)
-{
-	std::stringstream iss(str);
-	int f;
-	iss >> f;
-	return iss.eof() && !iss.fail();
-}
 
-bool isFloat(const std::string& str)
+bool createExperiment(PoissonBinomialDistribution& pbd, const std::string_view strN, const std::string_view strP)
 {
-	std::stringstream iss(str);
-	float f;
-	iss >> f;
-	return iss.eof() && !iss.fail();
-}
-
-bool createExperiment(PoissonBinomialDistribution& pbd, const std::string& strN, const std::string& strP)
-{
-	if (!isInt(strN)) {
+	auto n = Lud::is_num<int>(strN);
+	auto p = Lud::is_num<double>(strP);
+	if (!n)
+	{
 		std::cout << "Tries must be integer number\n";
 		return false;
-	} else if (!isFloat(strP)) {
+	}
+	if (!p)
+	{
 		std::cout << "Tries must be real number\n";
 		return false;
 	}
 
-	int n = std::stoi(strN);
-	double p = std::stod(strP);
-
-	return pbd.AddExperiment(n, p);
-
+	return pbd.AddExperiment(n.value(), p.value());
 }
 
 
 int main(int argc, char** argv)
 {
+	Lud::Cl cl("Poisson Binomial Distribution Calculator", ' ', "2.0");
 	// input format validation
-	if (argc < 5) {
-		std::cout << "Usage: [c|s]," << argv[0] << " Succeses, [tries, probability]...\n";
+	if (argc < 3)
+	{
+		std::cout << "Usage: " << argv[0] << " Successes, [tries, probability]...\n";
 		return 0;
 	}
-	std::string config(argv[1]);
-	if (config != "c" && config != "s") {
-		std::cout << "Invalid configuration\n";
-		return 0;
-	} else if (!isInt(argv[2])) {
+	auto k = Lud::is_num<int>(argv[1]);
+	if (!k)
+	{
 		std::cout << "Successes must be integer number\n";
 		return 0;
-	} else if ((argc - 3) % 2 != 0) {
+	}
+	else if (( argc - 2 ) % 2 != 0)
+	{
 		std::cout << "Can not input incomplete experiment\n";
 		return 0;
 	}
-	int k = std::stoi(argv[2]);
-	int experimentsNum = (argc - 3) / 2;
-	if (k < 0) {
+	int experimentsNum = ( argc - 2 ) / 2;
+	if (k < 0)
+	{
 		std::cout << "Tries can not be negative\n";
 		return 0;
 	}
-	PoissonBinomialDistribution pbd(k);
+	PoissonBinomialDistribution pbd(k.value());
 
-	for (int i = 0; i < experimentsNum; i++) {
-		if (!createExperiment(pbd, argv[3 + i*2], argv[4 + i*2])) {
-			std::cout << "experiment: [" << argv[3 + i*2] << ", " << argv[4 + i*2] << "] is invalid\n";
+	for (int i = 0; i < experimentsNum; i++)
+	{
+		if (!createExperiment(pbd, argv[2 + i * 2], argv[3 + i * 2]))
+		{
+			std::cout << "experiment: [" << argv[2 + i * 2] << ", " << argv[3 + i * 2] << "] is invalid\n";
 			return 0;
 		}
-	} 
+	}
 
-	
-	if (config == "c") {
-		if (!pbd.Run()) {
-			std::cout << "Incorrect experiment set\n";
-			return 0;
-		}
-	} else if (config == "s") {
-		if (!pbd.Simulate()) {
-			std::cout << "Incorrect experiment set\n";
-			return 0;
-		}
+
+	if (!pbd.Run())
+	{
+		std::cout << "Incorrect experiment set\n";
+		return 0;
 	}
 
 	std::cout << pbd << std::endl;

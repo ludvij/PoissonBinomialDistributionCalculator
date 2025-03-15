@@ -1,3 +1,9 @@
 obj/
 .vscode/
 *.exe
+
+.vs/
+bin/
+*.sln
+*.vcxproj
+*.vcxproj.users

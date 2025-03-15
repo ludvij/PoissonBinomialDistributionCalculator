@@ -1,0 +1,3 @@
+[submodule "Lud_Utils"]
+	path = Lud_Utils
+	url = git@github.com:ludvij/Lud_Utils.git
