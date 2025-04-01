@@ -5,9 +5,7 @@
 
 #include "PoissonBinomialDistribution.hpp"
 
-#include "Lud-utils/lud_parser.hpp"
-#define LUD_CL_IMPLEMENTATION
-#include "Lud-utils/lud_cl.hpp"
+#include "ludutils/lud_parse.hpp"
 
 
 bool createExperiment(PoissonBinomialDistribution& pbd, const std::string_view strN, const std::string_view strP)
@@ -31,7 +29,6 @@ bool createExperiment(PoissonBinomialDistribution& pbd, const std::string_view s
 
 int main(int argc, char** argv)
 {
-	Lud::Cl cl("Poisson Binomial Distribution Calculator", ' ', "2.0");
 	// input format validation
 	if (argc < 3)
 	{
@@ -72,7 +69,6 @@ int main(int argc, char** argv)
 		std::cout << "Incorrect experiment set\n";
 		return 0;
 	}
-
 	std::cout << pbd << std::endl;
 
 

@@ -16,8 +16,6 @@ LIBRARIES :=
 SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS := $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-dir_guard = @mkdir -p $(@D)
-
 
 all: directories $(BIN_DIR)/$(TARGET)
 	
