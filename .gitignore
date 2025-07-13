@@ -4,6 +4,7 @@ obj/
 
 .vs/
 bin/
+build/
 *.sln
 *.vcxproj
 *.vcxproj.user
