@@ -26,7 +26,6 @@ set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${output_dir}/lib)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-
 add_subdirectory(Lud_Utils)
 
 add_subdirectory(probcalc)

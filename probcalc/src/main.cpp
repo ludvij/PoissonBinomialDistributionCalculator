@@ -8,10 +8,27 @@
 #include "ludutils/lud_parse.hpp"
 
 
-bool createExperiment(PoissonBinomialDistribution& pbd, const std::string_view strN, const std::string_view strP)
+static std::optional<double> parse_probability(const std::string_view str_p)
 {
-	auto n = Lud::is_num<int>(strN);
-	auto p = Lud::is_num<double>(strP);
+	// double form 0.0...
+	auto num_form = Lud::is_num<double>(str_p);
+	if (num_form) return num_form;
+	// fractional form x/y
+	auto frac_form = Lud::is_fraction<double>(str_p);
+	if (frac_form) return frac_form;
+	// percentage form x%
+	auto percent_form = Lud::is_percentage<double>(str_p);
+	if (percent_form) return percent_form;
+	
+	std::println("could not detect probability number format");
+	return false;
+}
+
+
+bool createExperiment(PoissonBinomialDistribution& pbd, const std::string_view str_n, const std::string_view str_p)
+{
+	auto n = Lud::is_num<int>(str_n);
+	auto p = parse_probability(str_p);
 	if (!n)
 	{
 		std::println("Tries must be an integer number");
@@ -19,7 +36,7 @@ bool createExperiment(PoissonBinomialDistribution& pbd, const std::string_view s
 	}
 	if (!p)
 	{
-		std::println("Tries must be real number");
+		std::println("probability must be real number");
 		return false;
 	}
 
